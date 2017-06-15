@@ -1,0 +1,82 @@
+<html>
+<head>
+ <title>upload</title>
+ <link rel="stylesheet" href="/assets/uploadStyle.css">
+ <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+</head>
+<body>
+  <% include narvar.ejs%>
+
+  <form class="box has-advanced-upload" action="/upload" method="POST" enctype="multipart/form-data">
+    <div class="box__input">
+   <input id="chooseFile" type="file" name="myimage" class="inputfile" ></input>
+   <label for="chooseFile"><img id="label_img" src="http://localhost:3000/images/upload.gif" alt="upload"><br>
+     <div id="upload_text">
+     <strong>Choose an image</strong><span class="box__dragndrop"> or drag it here</span>.</label>
+ </div>
+ </div>
+  <div style="padding: 10px 10px">
+   <input hidden id="description" type="text" name="description" placeholder="description of the image"></input>
+   <input hidden class="submit_btn" id="submit" type="submit" name="submit" value="submit"></input>
+ </div>
+  </form>
+  <div style="text-align:center">
+  <button hidden id="reset_btn" class="submit_btn" onclick="resetPhoto()">reset</button>
+</div>
+  <script type="text/javascript">
+
+  var resetPhoto = function(){
+    document.getElementById("chooseFile").value = "";
+    document.getElementById("label_img").src="http://localhost:3000/images/upload.gif";
+    document.getElementById("description").setAttribute('hidden', true);
+    document.getElementById("reset_btn").setAttribute('hidden', true);
+    document.getElementById("submit").setAttribute('hidden', true);
+    document.getElementById('upload_text').removeAttribute('hidden');
+
+  };
+
+  $(function() {
+     $("input:file").change(function (event){
+       var fileName = $(this).val();
+       //$(".filename").html(fileName);
+       var extension = fileName.split('.')[fileName.split('.').length - 1].toLowerCase();
+       if(extension !== "jpg" && extension !== "jpeg" && extension !== "png" && extension !== "gif"){
+         alert("Supported file extensions are .jpg, .jpeg, .png and .gif");
+         document.getElementById("chooseFile").value = "";
+       }else{
+         var files = this.files;
+         var reader = new FileReader();
+         reader.onload= function(e){
+           var img = document.getElementById('label_img');
+           img.src= e.target.result;
+           img.style.width='400px';
+           document.getElementById('upload_text').setAttribute('hidden',true);
+           document.getElementById('description').removeAttribute('hidden');
+           document.getElementById('submit').removeAttribute('hidden');
+           document.getElementById('reset_btn').removeAttribute('hidden');
+         };
+         reader.readAsDataURL(files[0]);
+
+       }
+     });
+  });
+
+
+  var droppedFiles = false;
+
+  $form.on('drag dragstart dragend dragover dragenter dragleave drop', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  })
+  .on('dragover dragenter', function() {
+    $form.addClass('is-dragover');
+  })
+  .on('dragleave dragend drop', function() {
+    $form.removeClass('is-dragover');
+  })
+  .on('drop', function(e) {
+    droppedFiles = e.originalEvent.dataTransfer.files;
+  });
+</script>
+</body>
+</html>

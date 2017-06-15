@@ -1,0 +1,80 @@
+<html>
+<head>
+ <title>my images</title>
+ <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+ <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+ <script src="/assets/myImages.js"></script>
+ <style>
+  .my_img_block{
+    margin:20px 200px;
+    padding: 20px;
+    border-radius:10px;
+  }
+  .my_img_block:hover{
+    opacity: 0.7;
+    border: 2px dashed powderblue;
+  }
+ </style>
+</head>
+<body>
+  <% include narvar.ejs%>
+  <% data.forEach(function(d){ %>
+  <div style="text-align:center">
+  <div  class="my_img_block">
+    <img class="img-rounded" src="http://localhost:3000/images/<%= d.originalname%>" height='300px' width='400px' >
+    <form action="/update" method="POST" enctype="multipart/form-data">
+      <input hidden type="text" name="id" value="<%= d.id%>"></input>
+     <input type="text" name="description" placeholder="<%= d.description%>" onclick="enable('<%= d.id%>')" style="width:300px"></input>
+     <input id="<%= d.id%>" class="btn btn-default" type="submit" name="submit" value="Update" disabled="false"></input>
+    </form>
+    <button class="btn btn-default"  onclick="deletePhoto('<%= d.id%>')">Delete</button>
+  </div>
+</div>
+  <% }); %>
+
+
+  <script>
+
+    var enable = function(id){
+      document.getElementById(id).removeAttribute('disabled');
+    }
+
+
+    var deletePhoto = function(id){
+      $(function(){
+        alert('You are deleting this image');
+        $.ajax({
+          type: 'DELETE',
+          url: '/delete/'+id,
+          data: {},
+          success: function(data){
+          //do something with the data via front-end framework
+            location.reload();
+          }, error: function(jqXHR, textStatus, errorThrown) {
+              alert(errorThrown);
+          }
+        });
+   });
+  }
+
+  var changeDescription = function(id){
+    var input = document.getElementById(id).value;
+    $(function(){
+      alert('You are changing the description');
+      $.ajax({
+        type: 'POST',
+        url: '/update/'+id,
+        data: {description: input},
+        success: function(data){
+        //do something with the data via front-end framework
+          location.reload();
+        }, error: function(jqXHR, textStatus, errorThrown) {
+            alert(errorThrown);
+        }
+      });
+ });
+}
+
+  </script>
+</body>
+</html>
