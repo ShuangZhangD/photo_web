@@ -4,7 +4,8 @@ var bodyParser = require('body-parser');
 var helpers = require('express-helpers');
 var session = require('client-sessions');
 helpers(app);
-
+app.listen(process.env.PORT || 3000);
+console.log('Running on port 3000');
 // mongodb
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://test:test@ds155201.mlab.com:55201/myphoto')
@@ -59,5 +60,3 @@ app.get('/signout/',function(req, res){
   res.redirect('/signin');
 });
 
-app.listen(process.env.port || 3000);
-console.log('Running on port 3000');
